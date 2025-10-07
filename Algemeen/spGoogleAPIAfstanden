@@ -1,0 +1,84 @@
+/* Voorbeeld script bepalen afstand naar locatie
+Oorspronkelijk auteur: Curio / Jurgen van Oorschot
+*/
+
+/****** Object:  StoredProcedure [config].[sp_GoogleMaps_api_distance]    Script Date: 11/10/2023 14:58:01 ******/
+
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+create   PROCEDURE [config].[sp_GoogleMaps_api_distance]
+(
+	@p_url varchar(255) 
+	, @p_url_type varchar(25) = 'GET'
+	, @p_json varchar(max) output
+	, @p_status varchar(255) output
+	, @p_message varchar(255) output
+	, @p_debug int = 0
+)
+AS
+SET TEXTSIZE -1
+
+DECLARE @l_json varchar(max)
+		, @l_object int
+		, @l_token varchar(500) = 'API-KEY'
+		, @l_result int
+		, @l_source nvarchar(255)  
+		, @l_description nvarchar(255) 
+		, @l_status varchar(255)
+
+
+DECLARE @temptable TABLE (json_string varchar(max))
+
+EXEC sp_OACreate 'MSXML2.XMLHTTP', @l_Object OUT;
+
+
+EXEC @l_result = sp_OAMethod @l_Object, 'open', NULL, @p_url_type, @p_url, 'false'
+IF @l_result <> 0 
+GOTO ErrHandler
+EXEC @l_result = sp_OAMethod @l_Object, 'setRequestHeader', NULL, 'Content-Type', 'application/json'
+IF @l_result <> 0 
+GOTO ErrHandler
+EXEC @l_result = sp_OAMethod @l_Object, 'send'
+IF @l_result <> 0 
+GOTO ErrHandler
+
+INSERT INTO @temptable
+EXEC sp_OAGetProperty @l_Object, 'responseText'
+
+exec sp_OAGetProperty @l_Object, 'Status', @l_status out
+
+SELECT @p_json = json_string
+FROM @temptable
+
+IF @p_debug = 1
+SELECT OBJECT_NAME(@@SPID) procedureName
+	, @p_url as url
+	, @p_json as json
+
+EXEC sp_OADestroy @l_object;  
+
+SET @p_status = 'SUCCESS'
+
+RETURN
+
+ErrHandler:
+
+EXEC @l_result = sp_OAGetErrorInfo  
+        @l_object,  
+        @l_source OUT,  
+        @l_description OUT;  	
+
+SELECT null as json_string 
+	, @l_source as source
+	, @l_description as description
+
+
+SET @p_status = 'FAILED'
+SET @p_message = CONCAT(@l_source, '-', @l_description)
+
+EXEC sp_OADestroy @l_object;  
