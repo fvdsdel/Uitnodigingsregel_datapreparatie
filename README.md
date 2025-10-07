@@ -1,6 +1,6 @@
 # Over dit project
 Deze repository bevat data-preparatiecode voor verschillende studentinformatiesystemen (SIS) ten behoeve van het project [[Uitnodigingsregel](https://github.com/cedanl/Uitnodigingsregel)].
-.
+
 Het doel is om de dataverzameling te ondersteunen voor de uitnodigingsregel, zodat instellingen gemakkelijk gegevens op een consistente en herbruikbare manier kunnen aanleveren.
 
 Op dit moment is er nog niet voor alle systemen en variabelen code beschikbaar.
