@@ -14,7 +14,7 @@ Breid bestaande scripts uit met ontbrekende variabelen
 
 Dien een pull request of issue in met suggesties
 
-Samen werken we aan een bredere en beter bruikbare set data-preparatietools
+Samen werken we aan een bredere en beter bruikbare set data-preparatiescripts
 
 ## Contributors
 Thank you to all the people who have already contributed data retrieval scripts for the Uitnodigingsregel[[contributors](https://github.com/cedanl/Uitnodigingsregel_datapreparatie/graphs/contributors)].
